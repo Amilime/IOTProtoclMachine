@@ -1,34 +1,21 @@
 #include <iostream>
+#include <vector>
+#include <iomanip>
+
 #include "./Include/SerialPort.h"
+#include "./Include/User.h"
 
 using namespace std;
 
-void sendDemo(){
-    SerialPort S1;
-    if(S1.openSerial("COM1",9600,0,8,1)){
-        for (int i = 0; i < 10; ++i) {
-            S1.sendData("helloworld",10);
-        }
-        cout <<"send demo finished"<<endl;
-    } else{
-        cout<<"open serial port failed"<<endl;
-    }
-}
-
-void receiveDemo(){
-    SerialPort S1;
-    if(S1.openSerial("COM1",9600,0,8,1)){
-       char buf[4096];
-       while(true){
-           memset(buf,0,4096);
-           S1.receiveData(buf,4096);
-           cout<<buf<<' ';
-       }
-    }
-}
 
 int main() {
-    sendDemo();
+    User user;
+   // user.SendDemo("COM1",9600,0,8,1);
     //getchar();
+    SerialPort port = user.Open("COM1",9600,0,8,1,0);
+
+    user.SendDemo(port);
+
+    user.ReceiveDemo(port);
     return 0;
 }
