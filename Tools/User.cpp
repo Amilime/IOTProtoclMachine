@@ -44,12 +44,14 @@ void User::SendDemo(SerialPort &S) {
         S.sendData(&start,1);
         S.sendData(&func[0],1);
         S.sendData(&length,1);
+        cout<<"send: "<<endl;
         for (int & i : data) {
-            cout<<"send: "<<hex<< i<<endl;
+            cout<<hex<<' '<< i;
             S.sendData(&i,1);
 
-        cout <<"send demo finished"<<endl;
+       // cout <<"send demo finished"<<endl;
     }
+        cout<<endl;
 
 }
 

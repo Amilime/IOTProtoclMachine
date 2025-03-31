@@ -172,7 +172,7 @@ unsigned long SerialPort::receiveData(void *buf, int len) {
 
     //创建一个用于OVERLAPPED的事件处理
     memset(&m_osRead, 0, sizeof(m_osRead));
-    //没懂这里是什么意思
+
     m_osRead.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 
     ClearCommError(hSerial, &ErrorFlags, &comstat); //清除通讯错误，获得设备当前状态
@@ -183,8 +183,8 @@ unsigned long SerialPort::receiveData(void *buf, int len) {
         return 0;
     }; //如果输入缓冲区字节数为0，则返回false
 
-    cout << "Input Buffer Count: " << comstat.cbInQue << endl;
-    cout << " bytesRead: " << bytesRead << endl;
+ //   cout << "Input Buffer Count: " << comstat.cbInQue << endl;
+  //  cout << " bytesRead: " << bytesRead << endl;
     //同步
 
     if (this->synchronizeflag == 1) {
