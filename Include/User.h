@@ -35,7 +35,7 @@ public:
 
     void ReceiveDemo(SerialPort &s); // 基础收数据
 
-
+    SerialPort CreateSP();  // 创建并打开通道
 
 };
 

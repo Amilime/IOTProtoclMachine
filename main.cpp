@@ -10,10 +10,7 @@ using namespace std;
 
 int main() {
     User user;
-   // user.SendDemo("COM1",9600,0,8,1);
-    //getchar();
-    SerialPort port = user.Open("COM1",9600,0,8,1,0);
-
+    SerialPort port = user.CreateSP();
     user.SendDemo(port);
 
     user.ReceiveDemo(port);
