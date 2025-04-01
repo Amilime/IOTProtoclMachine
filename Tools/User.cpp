@@ -8,9 +8,10 @@
 #include <vector>
 #include <iomanip>
 #include <string>
-
+#include <windows.h>
 
 using namespace std;
+
 
 User::User() {
 
@@ -160,11 +161,14 @@ SerialPort User::CreateSP() {
 
 // 数据存储
 void User::SaveData() {
-    const string locate = "../SaveFile";
+    FileDirectory();
+
+    const string locate = "../SaveFile/";
     string filename;
-    cout<<"输入你要存储/创建的库:"<<endl;
+    cout<<"输入你要存储/创建的库[不用写后缀]:"<<endl;
     cin>> filename;
     string FinalName = locate+filename+".amdb";
+
     ProtocolSave ps;
     ps.CheckAndCreateFile(FinalName);
     cout<<"已打开/创建库:"<<FinalName<<endl;
@@ -173,6 +177,78 @@ void User::SaveData() {
     vector<Device> Data = ps.LoadData(FinalName);
     cout<<"---加载成功---"<<endl;
 
+    cout<<"---创建新设备---"<<endl;
+    Device device;
+    device.id = 0; //这个会自动生成不用设置
+    cout<<"请输入设备名字："<<endl;
+    cin>>device.name;
+    cout<<"请输入设备参数信息介绍："<<endl;
+    cin>>device.params;
+    cout<<"请输入功能："<<endl;
+    cin>>device.function;
+    cout<<"请输入功能码 [以空格分隔的十六进制数，0x01 0xEF]:"<<endl;
+    string inputfunc;
+    cin.ignore();
+    getline(cin,inputfunc);
+    ReadVec(inputfunc,device.func_code);
+    cout<<"请输入响应信息 [以空格分隔的十六进制数]:"<<endl;
+    string inputres;
+    getline(cin,inputres);
+    ReadVec(inputres,device.response);
+
+    ps.AddDevice(Data,device,FinalName);
+    cout<<"---已添加数据---"<<endl;
+    ps.PrintDevices(Data);
+
+}
+
+void User::ReadVec(const string& input,vector<int>& data) {
+
+        istringstream iss(input);
+        string hexValue;
 
 
+        data.clear();
+        //空格读取
+        while(iss >>hexValue){
+            int value;
+            stringstream ss;
+
+            if(hexValue.find("0x") == 0) {
+                ss <<hex<<hexValue.substr(2);
+            }else{
+                ss <<hex <<hexValue;
+            }
+
+
+            ss >>value;
+            if (ss.fail()) {
+                cout << "解析错误：" << hexValue << endl; // 添加错误处理
+                continue; // 跳过此值
+            }
+
+            data.push_back(static_cast<int>(value));
+        }
+
+}
+
+void User::FileDirectory() {
+    string directoryPath = "..\\SaveFile\\*.amdb";
+    WIN32_FIND_DATA findFileData;
+    HANDLE hFind = FindFirstFile(directoryPath.c_str(), &findFileData);
+     //不知道为什么查找不能使用filesystem库，这里用windows的api了
+    if (hFind == INVALID_HANDLE_VALUE) {
+        cout << "当前没有数据库" << endl;
+        return;
+    }
+    cout<<"文件夹中已有库："<<endl;
+
+    do {
+        // 检查是否是常规文件
+        if (!(findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+            cout << findFileData.cFileName << endl;
+        }
+    } while (FindNextFile(hFind, &findFileData) != 0);
+
+    FindClose(hFind);
 }

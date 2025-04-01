@@ -63,7 +63,7 @@ vector<Device> ProtocolSave::LoadData(const string &filename) {
         getline(ss, device.function, ',');
 
         getline(ss, token, ',');  // 读取功能码
-        device.func_code = SplitStringToVector(token, ";");
+        device.func_code = SplitStringToVector(token, ";");  //调试执行到这里报错
 
         getline(ss, token, ',');  // 读取响应
         device.response = SplitStringToVector(token, ";");
@@ -128,7 +128,7 @@ void ProtocolSave::PrintDevices(const vector<Device> &devices) {
              << ", 功能: " << device.function
              << ", 功能码: ";
         for (const int& code : device.func_code) {
-            cout<<code <<code<<" ";
+            cout<<code<<" ";
         }
         cout<<", 响应: ";
         for (const int& resp : device.response) {

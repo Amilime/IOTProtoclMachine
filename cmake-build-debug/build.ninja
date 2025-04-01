@@ -79,6 +79,12 @@ build CMakeFiles/C_Serial.dir/Tools/User.cpp.obj: CXX_COMPILER__C_Serial_Debug E
   OBJECT_DIR = CMakeFiles\C_Serial.dir
   OBJECT_FILE_DIR = CMakeFiles\C_Serial.dir\Tools
 
+build CMakeFiles/C_Serial.dir/Test/test1.cpp.obj: CXX_COMPILER__C_Serial_Debug E$:/Yijiagou_source/iot_study_project2/C_Serial/Test/test1.cpp || cmake_object_order_depends_target_C_Serial
+  DEP_FILE = CMakeFiles\C_Serial.dir\Test\test1.cpp.obj.d
+  FLAGS = -g -std=gnu++14
+  OBJECT_DIR = CMakeFiles\C_Serial.dir
+  OBJECT_FILE_DIR = CMakeFiles\C_Serial.dir\Test
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target C_Serial
@@ -87,7 +93,7 @@ build CMakeFiles/C_Serial.dir/Tools/User.cpp.obj: CXX_COMPILER__C_Serial_Debug E
 #############################################
 # Link the executable C_Serial.exe
 
-build C_Serial.exe: CXX_EXECUTABLE_LINKER__C_Serial_Debug CMakeFiles/C_Serial.dir/main.cpp.obj CMakeFiles/C_Serial.dir/Tools/SerialPort.cpp.obj CMakeFiles/C_Serial.dir/Tools/ProtocolSave.cpp.obj CMakeFiles/C_Serial.dir/Tools/ProtocolLoad.cpp.obj CMakeFiles/C_Serial.dir/Tools/User.cpp.obj
+build C_Serial.exe: CXX_EXECUTABLE_LINKER__C_Serial_Debug CMakeFiles/C_Serial.dir/main.cpp.obj CMakeFiles/C_Serial.dir/Tools/SerialPort.cpp.obj CMakeFiles/C_Serial.dir/Tools/ProtocolSave.cpp.obj CMakeFiles/C_Serial.dir/Tools/ProtocolLoad.cpp.obj CMakeFiles/C_Serial.dir/Tools/User.cpp.obj CMakeFiles/C_Serial.dir/Test/test1.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\C_Serial.dir

@@ -6,6 +6,8 @@
 #define C_SERIAL_USER_H
 
 #include "SerialPort.h"
+#include <vector>
+#include <string>
 
 /**
  * 预指令对函数进行封装
@@ -38,6 +40,10 @@ public:
     SerialPort CreateSP();  // 创建并打开通道
 
     void SaveData();
+
+    void ReadVec(const std::string& input,std::vector<int> &data);
+
+    void FileDirectory();
 };
 
 
