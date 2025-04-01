@@ -44,7 +44,7 @@ QUERY ALL
 * 查询某个库中的所有信息(库不用加后缀)
 
  QUERY {DBNAME}
-* 查询某个库中某个id的信息(ID=三个不能分开)
+* 查询某个库中某个id的信息(ID=不能分开)
 
  QUERY {DBNAME} WHERE ID={NUM}
 * 开启存储数据到某个库中功能(里头不能出现英文的逗号)
