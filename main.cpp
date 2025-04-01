@@ -36,6 +36,8 @@ int main() {
     * 开启存储数据到某个库中功能
     * SAVEDATA TO {DBNAME}
     *
+    * 再加一个 删除某个库中的某个id所在行
+    * DELETE {DBNAME} WHERE ID={NUM}
     *
     * 开启串口通信
     * OPEN SP

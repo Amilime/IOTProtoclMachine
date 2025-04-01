@@ -15,6 +15,7 @@ enum CommandType {
     QUERY_DB,
     QUERY_ID,
     SAVE_DATA,
+    DELETE_DATA,
     OPEN_SP,
     OPEN_RC,
     SEND_REQ,
@@ -36,6 +37,7 @@ private:
     void queryDb(const std::string& dbName);
     void queryId(const std::string& dbName, int id);
     void saveData(const std::string& dbName);
+    void deleteData(const std::string& dbName,int id);
     void openSP();
     void openRC();
     void sendReq(const std::string& dbName, int id);

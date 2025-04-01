@@ -160,21 +160,16 @@ SerialPort User::CreateSP() {
 }
 
 // 数据存储
-void User::SaveData() {
-    FileDirectory();
+void User::SaveData(string &filename) {
 
-    const string locate = "../SaveFile/";
-    string filename;
-    cout << "输入你要存储/创建的库[不用写后缀]:" << endl;
-    cin >> filename;
-    string FinalName = locate + filename + ".amdb";
+  //  cout << "输入你要存储/创建的库[不用写后缀]:" << endl;
 
     ProtocolSave ps;
-    ps.CheckAndCreateFile(FinalName);
-    cout << "已打开/创建库:" << FinalName << endl;
+    ps.CheckAndCreateFile(filename);
+    cout << "已打开/创建库:" << filename << endl;
 
     cout << "---加载内容中---" << endl;
-    vector<Device> Data = ps.LoadData(FinalName);
+    vector<Device> Data = ps.LoadData(filename);
     cout << "---加载成功---" << endl;
 
     cout << "---创建新设备---" << endl;
@@ -196,7 +191,7 @@ void User::SaveData() {
     getline(cin, inputres);
     ReadVec(inputres, device.response);
 
-    ps.AddDevice(Data, device, FinalName);
+    ps.AddDevice(Data, device, filename);
     cout << "---已添加数据---" << endl;
     ps.PrintDevices(Data);
 

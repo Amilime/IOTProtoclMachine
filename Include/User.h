@@ -39,7 +39,7 @@ public:
 
     SerialPort CreateSP();  // 创建并打开通道
 
-    void SaveData();
+    void SaveData(std::string &filename);
 
     void ReadVec(const std::string &input, std::vector<int> &data);
 

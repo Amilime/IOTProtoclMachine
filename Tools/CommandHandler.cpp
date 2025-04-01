@@ -14,7 +14,7 @@
 using namespace std;
 
 CommandHandler::CommandHandler() {
-    
+
 }
 
 // 命令解析
@@ -28,6 +28,8 @@ CommandType CommandHandler::parseCommand(const string &command) {
         } else {
             return QUERY_DB;
         }
+    } else if (command.find("DELETE") == 0) {
+        return DELETE_DATA;
     } else if (command.find("SAVEDATA TO") == 0) {
         return SAVE_DATA;
     } else if (command == "OPEN SP") {
@@ -44,7 +46,7 @@ CommandType CommandHandler::parseCommand(const string &command) {
 }
 
 // 执行命令
-void CommandHandler::executeCommand(const CommandType& commandType, const std::string& command) {
+void CommandHandler::executeCommand(const CommandType &commandType, const std::string &command) {
     switch (commandType) {
         case QUERY_ALL:
             queryAll();
@@ -55,15 +57,20 @@ void CommandHandler::executeCommand(const CommandType& commandType, const std::s
             break;
         }
         case QUERY_ID: {
-            std::string dbName = extractDBName(command);
+            string dbName = extractDBName(command);
             int id = extractID(command);
             queryId(dbName, id);
             break;
         }
         case SAVE_DATA: {
-            std::string dbName = extractDBName(command);
+            string dbName = extractDBName(command);
             saveData(dbName);
             break;
+        }
+        case DELETE_DATA: {
+            string dbName = extractDBName(command);
+            int id = extractID(command);
+            deleteData(dbName, id);
         }
         case OPEN_SP:
             openSP();
@@ -72,25 +79,25 @@ void CommandHandler::executeCommand(const CommandType& commandType, const std::s
             openRC();
             break;
         case SEND_REQ: {
-            std::string dbName = extractDBName(command);
+            string dbName = extractDBName(command);
             int id = extractID(command);
             sendReq(dbName, id);
             break;
         }
         case SEND_REQ_RES: {
-            std::string dbName = extractDBName(command);
+            string dbName = extractDBName(command);
             int id = extractID(command);
             sendReqRes(dbName, id);
             break;
         }
         default:
-            std::cerr << "未知命令！" << std::endl;
+            cerr << "未知命令！" << endl;
             break;
     }
 }
 
 // 辅助函数：提取 DBNAME
-string CommandHandler::extractDBName(const std::string& command) {
+string CommandHandler::extractDBName(const std::string &command) {
     size_t start = command.find("{");
     size_t end = command.find("}");
     if (start != std::string::npos && end != std::string::npos && start < end) {
@@ -100,7 +107,7 @@ string CommandHandler::extractDBName(const std::string& command) {
 }
 
 // 提取 ID，处理为空格和大括号情况
-int CommandHandler::extractID(const std::string& command) {
+int CommandHandler::extractID(const std::string &command) {
     size_t pos = command.find("ID=");
     if (pos != std::string::npos) {
         size_t id_start = pos + 3; // 跳过 "ID="
@@ -123,10 +130,10 @@ int CommandHandler::extractID(const std::string& command) {
             // 尝试转换为整型
             try {
                 return std::stoi(id_str); // 转换为整型
-            } catch (std::invalid_argument&) {
+            } catch (std::invalid_argument &) {
                 std::cerr << "无效的 ID 值: " << id_str << std::endl;
                 return -1; // 返回无效标志
-            } catch (std::out_of_range&) {
+            } catch (std::out_of_range &) {
                 std::cerr << "ID 值超出范围: " << id_str << std::endl;
                 return -1; // 返回无效标志
             }
@@ -136,35 +143,53 @@ int CommandHandler::extractID(const std::string& command) {
 }
 
 // 具体命令的实现
-void CommandHandler::queryAll() {
+void CommandHandler::queryAll() {   // 查询所有的数据库
     User user;
     user.FileDirectory();
 }
 
-void CommandHandler::queryDb(const std::string& dbName) {
-    std::cout << "查询数据库: " << dbName << "\n";
+void CommandHandler::queryDb(const std::string &dbName) {  //查询某个数据库里的所有信息
+    ProtocolSave ps;
+    const string locate = "../SaveFile/";
+    string filename = locate + dbName + ".amdb";
+    vector<Device> Data = ps.LoadData(filename);
+    ps.PrintDevices(Data);
 }
 
-void CommandHandler::queryId(const std::string& dbName, int id) {
-    std::cout << "查询数据库的行: " << dbName << " 中的 ID: " << id << "\n";
+void CommandHandler::queryId(const std::string &dbName, int id) {  //查询某个数据库里某个ID的所有信息
+    std::cout << "暂未实现（似乎也没必要）" << dbName << " 中的 ID: " << id << "\n";
 }
 
-void CommandHandler::saveData(const std::string& dbName) {
-    std::cout << "保存数据到数据库: " << dbName << "\n";
+void CommandHandler::saveData(const std::string &dbName) { //存储数据
+    User user;
+    const string locate = "../SaveFile/";
+    string filename = locate + dbName + ".amdb";
+    user.SaveData(filename);
+}
+
+void CommandHandler::deleteData(const std::string &dbName, int id) {
+    ProtocolSave ps;
+    const string locate = "../SaveFile/";
+    string filename = locate + dbName + ".amdb";
+    vector<Device> devices_table = ps.LoadData(filename);
+    ps.RemoveDevice(devices_table,id,filename);
+    cout << "---删除完成---" << endl;
+    ps.PrintDevices(devices_table);
 }
 
 void CommandHandler::openSP() {
-    std::cout << "开启串口通信.\n";
+    User user;
+
 }
 
 void CommandHandler::openRC() {
     std::cout << "开启接收通道.\n";
 }
 
-void CommandHandler::sendReq(const std::string& dbName, int id) {
+void CommandHandler::sendReq(const std::string &dbName, int id) {
     std::cout << "发送请求，数据库: " << dbName << " ID: " << id << "\n";
 }
 
-void CommandHandler::sendReqRes(const std::string& dbName, int id) {
+void CommandHandler::sendReqRes(const std::string &dbName, int id) {
     std::cout << "发送请求和响应，数据库: " << dbName << " ID: " << id << "\n";
 }
