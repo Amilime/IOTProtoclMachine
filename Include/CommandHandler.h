@@ -8,6 +8,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include "SerialPort.h"
 
 // 命令类型枚举
 enum CommandType {
@@ -25,6 +26,7 @@ enum CommandType {
 
 class CommandHandler {
 public:
+
     CommandHandler();
 
     CommandType parseCommand(const std::string&command);
@@ -33,6 +35,9 @@ public:
 
 private:
     // 具体的命令实现
+    SerialPort currentPort;
+
+    bool isSPOpened = false;
     void queryAll();
     void queryDb(const std::string& dbName);
     void queryId(const std::string& dbName, int id);

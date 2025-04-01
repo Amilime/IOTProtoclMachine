@@ -9,6 +9,8 @@
 #include <iomanip>
 #include <string>
 #include <windows.h>
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -38,13 +40,52 @@ SerialPort User::Open(const char *portname,
 
 }
 
-void User::SendDemo(SerialPort &S) {
+void User::SendDemo(SerialPort &S,const string &database,int id) {
 
+    ifstream inFile(database);
+    if(!inFile.is_open()){
+        cerr <<"打开数据库错误:"<<database<<endl;
+        return;
+    }
+
+    string line;
+    vector<int> data;
+
+    for (int i = 1; i <= id; ++i) {
+        if(!getline(inFile,line)){
+            cerr << "无法读取到id为 " << id << " 的数据" << endl;
+            inFile.close();
+            return;
+        }
+    }
+        stringstream ss(line);
+        string temp;
+
+    //分割
+    for (int i = 0; i < 4; ++i) {
+        if (!getline(ss, temp, i<5 ? ',': '\n')) {
+            cerr << "行格式有误，不够字段" << endl;
+            inFile.close();
+            return; // 行格式有误，提前退出
+        }
+    }
+
+    //读取
+    if (getline(ss, temp, ',')) { // 读取第五个字段
+        stringstream dataStream(temp);
+        string dataItem;
+
+        while(getline(dataStream,dataItem,';')){
+            if(!dataItem.empty()){
+                data.push_back(stoi(dataItem)); //整形添加到data中
+            }
+        }
+    }
     const int func[]{0x01}; //功能码池
     int start = 0x24;
-    vector<int> data{0x01, 0x03, 0x00, 0x00, 0x00, 0x02, 0xC4, 0X0B, 0xFE};
+ //   vector<int> data{0x01, 0x03, 0x00, 0x00, 0x00, 0x02, 0xC4, 0X0B, 0xFE};
     int length = 0x08;
-
+    int end = 0xEF;
 
     S.sendData(&start, 1);
     S.sendData(&func[0], 1);
@@ -52,12 +93,98 @@ void User::SendDemo(SerialPort &S) {
     cout << "send: " << endl;
     for (int &i: data) {
         cout << hex << ' ' << i;
-        S.sendData(&i, 1);
+        S.sendData(&i, 1); //这里本该用sizeof 但是获取到的int是四个字节，属于是设计缺陷，后续应该改成无符号整型
 
         // cout <<"send demo finished"<<endl;
     }
+    S.sendData(&end,1);
     cout << endl;
+    inFile.close();
 
+}
+
+void User::SendDemo2(SerialPort &S, const string &database, int id) {
+    ifstream inFile(database);
+    if (!inFile.is_open()) {
+        cerr << "打开数据库错误: " << database << endl;
+        return;
+    }
+
+    string line;
+    vector<int> data1, data2; // 用于存储第五个和第六个字段的数据
+
+    for (int i = 1; i <= id; ++i) {
+        if (!getline(inFile, line)) {
+            cerr << "无法读取到id为 " << id << " 的数据" << endl;
+            inFile.close();
+            return;
+        }
+    }
+
+    stringstream ss(line);
+    string temp;
+
+    // 分割字段
+    for (int i = 0; i < 6; ++i) {
+        if (!getline(ss, temp, i < 5 ? ',' : '\n')) {
+            cerr << "行格式有误，不够字段" << endl;
+            inFile.close();
+            return; // 提前退出
+        }
+
+        // 处理第五个字段
+        if (i == 4) {
+            stringstream dataStream(temp);
+            string dataItem;
+            while (getline(dataStream, dataItem, ';')) {
+                if (!dataItem.empty()) {
+                    data1.push_back(stoi(dataItem)); // 整形添加到data1中
+                }
+            }
+        }
+
+        // 处理第六个字段
+        if (i == 5) {
+            stringstream dataStream(temp);
+            string dataItem;
+            while (getline(dataStream, dataItem, ';')) {
+                if (!dataItem.empty()) {
+                    data2.push_back(stoi(dataItem)); // 整形添加到data2中
+                }
+            }
+        }
+    }
+
+    const int func[]{0x02}; // 功能码池
+    int start = 0x24;
+    int length = 0x08;
+    int end = 0xEF;
+
+    S.sendData(&start, 1);
+    S.sendData(&func[0], 1);
+    S.sendData(&length, 1);
+
+    cout << "send: " << endl;
+
+    // 发送第一个字段数据
+    for (int &i : data1) {
+        cout << hex << ' ' << i;
+        S.sendData(&i, 1); // 发送整数
+    }
+
+    // 发送间隔标识
+    const int interval = 0x99;
+    S.sendData(&interval, 1);
+
+    // 发送第二个字段数据
+    for (int &i : data2) {
+        cout << hex << ' ' << i;
+        S.sendData(&i, 1); // 发送整数
+    }
+
+    S.sendData(&end, 1);
+    cout << endl;
+    inFile.close();
 }
 
 void User::ReceiveDemo(SerialPort &S) {
@@ -247,3 +374,5 @@ void User::FileDirectory() {
 
     FindClose(hFind);
 }
+
+

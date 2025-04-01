@@ -107,9 +107,9 @@ string CommandHandler::extractDBName(const std::string &command) {
 }
 
 // 提取 ID，处理为空格和大括号情况
-int CommandHandler::extractID(const std::string &command) {
+int CommandHandler::extractID(const string &command) {
     size_t pos = command.find("ID=");
-    if (pos != std::string::npos) {
+    if (pos != string::npos) {
         size_t id_start = pos + 3; // 跳过 "ID="
 
         // 跳过空格
@@ -120,8 +120,18 @@ int CommandHandler::extractID(const std::string &command) {
         // 查找 ID 的结束位置，跳过 `{` 和空格
         size_t id_end = command.find_first_of(" }", id_start);
 
+        // 处理 `{` 引导
+        if (command[id_start] == '{') {
+            id_start++; // 跳过 `{`
+        }
+
+        // 查找 ID 的结束位置
+        id_end = command.find_first_of("}", id_start);
+
         if (id_end != string::npos) {
-            std::string id_str = command.substr(id_start, id_end - id_start);
+            string id_str = command.substr(id_start, id_end - id_start);
+
+
 
             // 处理大括号，去除所有多余的字符
             id_str.erase(std::remove(id_str.begin(), id_str.end(), '{'), id_str.end());
@@ -178,18 +188,40 @@ void CommandHandler::deleteData(const std::string &dbName, int id) {
 }
 
 void CommandHandler::openSP() {
+    cout << "开启串口通信\n";
     User user;
-
+    currentPort = user.CreateSP(); // 其实这里预设参数也应该存入数据库的，但是懒了暂时没做（
+    isSPOpened = true;
 }
 
 void CommandHandler::openRC() {
-    std::cout << "开启接收通道.\n";
+    if(isSPOpened){
+        cout << "开启接收通道\n";
+        User user;
+        user.ReceiveDemo(currentPort);
+    } else{
+        cout <<"串口未开启，无法接受数据\n";
+    }
 }
 
 void CommandHandler::sendReq(const std::string &dbName, int id) {
-    std::cout << "发送请求，数据库: " << dbName << " ID: " << id << "\n";
+    if(isSPOpened){
+        const string locate = "../SaveFile/";
+        string filename = locate + dbName + ".amdb";
+        User user;
+        user.SendDemo(currentPort,filename,id);
+    } else{
+        cout <<"串口未开启，无法接受数据\n";
+    }
 }
 
 void CommandHandler::sendReqRes(const std::string &dbName, int id) {
-    std::cout << "发送请求和响应，数据库: " << dbName << " ID: " << id << "\n";
+    if(isSPOpened){
+        const string locate = "../SaveFile/";
+        string filename = locate + dbName + ".amdb";
+        User user;
+        user.SendDemo2(currentPort,filename,id);
+    } else{
+        cout <<"串口未开启，无法接受数据\n";
+    }
 }
