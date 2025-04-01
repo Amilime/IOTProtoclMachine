@@ -1,5 +1,5 @@
 //
-// Created by y on 3/30/2025.
+// Created by Am on 3/30/2025.
 //
 
 #include "../Include/ProtocolSave.h"
@@ -8,7 +8,6 @@
 #include <string>
 #include <sstream>
 #include <fstream>
-#include <filesystem>
 #include <algorithm>
 
 using namespace std;
@@ -110,7 +109,7 @@ void ProtocolSave::AddDevice(vector<Device> &devices, const Device &device, cons
     SaveData(devices, filename);
 }
 
-//查
+//查 //这里可以做行删除，暂时不实现
 Device *ProtocolSave::FindDevice(vector<Device> &devices, int id) {
     for (auto &device: devices) {  //这里就直接用建议的顺序查找来查了，后续可以修改
         if (device.id == id) {

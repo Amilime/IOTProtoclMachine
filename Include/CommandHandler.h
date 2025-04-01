@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <vector>
 #include "SerialPort.h"
+#include "User.h"
 
 // 命令类型枚举
 enum CommandType {
@@ -29,28 +30,28 @@ public:
 
     CommandHandler();
 
-    CommandType parseCommand(const std::string&command);
+    static CommandType parseCommand(const std::string&command);
 
     void executeCommand(const CommandType& commandType, const std::string& command);
 
 private:
     // 具体的命令实现
     SerialPort currentPort;
-
+    User user;
     bool isSPOpened = false;
-    void queryAll();
-    void queryDb(const std::string& dbName);
-    void queryId(const std::string& dbName, int id);
-    void saveData(const std::string& dbName);
-    void deleteData(const std::string& dbName,int id);
+    static void queryAll();
+    static void queryDb(const std::string& dbName);
+    static void queryId(const std::string& dbName, int id);
+    static void saveData(const std::string& dbName);
+    static void deleteData(const std::string& dbName,int id);
     void openSP();
     void openRC();
     void sendReq(const std::string& dbName, int id);
     void sendReqRes(const std::string& dbName, int id);
 
     // 提取参数辅助函数
-    std::string extractDBName(const std::string& command);
-    int extractID(const std::string& command);
+    static std::string extractDBName(const std::string& command);
+    static int extractID(const std::string& command);
 
 };
 

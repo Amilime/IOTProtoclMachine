@@ -1,5 +1,5 @@
 //
-// Created by y on 3/30/2025.
+// Created by Am on 3/30/2025.
 //
 
 #include "../Include/User.h"
@@ -10,7 +10,7 @@
 #include <string>
 #include <windows.h>
 #include <fstream>
-#include <sstream>
+#include <thread>
 
 using namespace std;
 
@@ -40,11 +40,11 @@ SerialPort User::Open(const char *portname,
 
 }
 
-void User::SendDemo(SerialPort &S,const string &database,int id) {
+void User::SendDemo(SerialPort &S, const string &database, int id) {
 
     ifstream inFile(database);
-    if(!inFile.is_open()){
-        cerr <<"打开数据库错误:"<<database<<endl;
+    if (!inFile.is_open()) {
+        cerr << "打开数据库错误:" << database << endl;
         return;
     }
 
@@ -52,18 +52,18 @@ void User::SendDemo(SerialPort &S,const string &database,int id) {
     vector<int> data;
 
     for (int i = 1; i <= id; ++i) {
-        if(!getline(inFile,line)){
+        if (!getline(inFile, line)) {
             cerr << "无法读取到id为 " << id << " 的数据" << endl;
             inFile.close();
             return;
         }
     }
-        stringstream ss(line);
-        string temp;
+    stringstream ss(line);
+    string temp;
 
     //分割
     for (int i = 0; i < 4; ++i) {
-        if (!getline(ss, temp, i<5 ? ',': '\n')) {
+        if (!getline(ss, temp, i < 5 ? ',' : '\n')) {
             cerr << "行格式有误，不够字段" << endl;
             inFile.close();
             return; // 行格式有误，提前退出
@@ -75,15 +75,15 @@ void User::SendDemo(SerialPort &S,const string &database,int id) {
         stringstream dataStream(temp);
         string dataItem;
 
-        while(getline(dataStream,dataItem,';')){
-            if(!dataItem.empty()){
+        while (getline(dataStream, dataItem, ';')) {
+            if (!dataItem.empty()) {
                 data.push_back(stoi(dataItem)); //整形添加到data中
             }
         }
     }
     const int func[]{0x01}; //功能码池
     int start = 0x24;
- //   vector<int> data{0x01, 0x03, 0x00, 0x00, 0x00, 0x02, 0xC4, 0X0B, 0xFE};
+    //   vector<int> data{0x01, 0x03, 0x00, 0x00, 0x00, 0x02, 0xC4, 0X0B, 0xFE};
     int length = 0x08;
     int end = 0xEF;
 
@@ -97,7 +97,7 @@ void User::SendDemo(SerialPort &S,const string &database,int id) {
 
         // cout <<"send demo finished"<<endl;
     }
-    S.sendData(&end,1);
+    S.sendData(&end, 1);
     cout << endl;
     inFile.close();
 
@@ -167,7 +167,7 @@ void User::SendDemo2(SerialPort &S, const string &database, int id) {
     cout << "send: " << endl;
 
     // 发送第一个字段数据
-    for (int &i : data1) {
+    for (int &i: data1) {
         cout << hex << ' ' << i;
         S.sendData(&i, 1); // 发送整数
     }
@@ -177,7 +177,7 @@ void User::SendDemo2(SerialPort &S, const string &database, int id) {
     S.sendData(&interval, 1);
 
     // 发送第二个字段数据
-    for (int &i : data2) {
+    for (int &i: data2) {
         cout << hex << ' ' << i;
         S.sendData(&i, 1); // 发送整数
     }
@@ -187,23 +187,28 @@ void User::SendDemo2(SerialPort &S, const string &database, int id) {
     inFile.close();
 }
 
-void User::ReceiveDemo(SerialPort &S) {
+void User::StartReceiving(SerialPort &S) {
+    std::thread receiveThread([this, &S]() { this->ReceiveDemo(S); }); // 使用 lambda 函数
+    receiveThread.detach(); // 分离线程
+}
 
+
+void User::ReceiveDemo(SerialPort &S) {
 
     char buf[4096];
     while (true) {
         memset(buf, 0, sizeof(buf));
         unsigned long bytesRead = S.receiveData(buf, sizeof(buf));
         if (bytesRead > 0) {
-            cout << "Buffer Content (Hex): ";
+            cout << endl;
+            cout << "收到数据 ";
             unsigned char *p = reinterpret_cast<unsigned char *>(buf);
             for (DWORD i = 0; i < bytesRead; ++i) {
                 cout << hex << setw(2) << setfill('0') << (int) p[i] << " ";
             }
             cout << dec << endl;
-
         }
-        Sleep(1000);
+        this_thread::sleep_for(chrono::milliseconds(1000));
     }
 }
 
@@ -269,13 +274,13 @@ SerialPort User::CreateSP() {
         }
 
         try {
+            res = true;
             parity = static_cast<char>(parity);
             databit = static_cast<char>(databit);
             stopbit = static_cast<char>(stopbit);
             synchronizeflag = static_cast<char>(synchronizeflag);
             SerialPort S = user.Open(portname.c_str(), baudrate, parity, databit, stopbit, synchronizeflag);
             cout << "串口开启成功:" << portname << endl;
-            res = true;
             return S;
 
         } catch (const runtime_error &e) {
@@ -283,20 +288,21 @@ SerialPort User::CreateSP() {
             cout << "请重新输入参数" << endl;
         }
 
+
     }
 }
 
 // 数据存储
 void User::SaveData(string &filename) {
 
-  //  cout << "输入你要存储/创建的库[不用写后缀]:" << endl;
+    //  cout << "输入你要存储/创建的库[不用写后缀]:" << endl;
 
     ProtocolSave ps;
-    ps.CheckAndCreateFile(filename);
+    ProtocolSave::CheckAndCreateFile(filename);
     cout << "已打开/创建库:" << filename << endl;
 
     cout << "---加载内容中---" << endl;
-    vector<Device> Data = ps.LoadData(filename);
+    vector<Device> Data = ProtocolSave::LoadData(filename);
     cout << "---加载成功---" << endl;
 
     cout << "---创建新设备---" << endl;
@@ -318,9 +324,9 @@ void User::SaveData(string &filename) {
     getline(cin, inputres);
     ReadVec(inputres, device.response);
 
-    ps.AddDevice(Data, device, filename);
+    ProtocolSave::AddDevice(Data, device, filename);
     cout << "---已添加数据---" << endl;
-    ps.PrintDevices(Data);
+    ProtocolSave::PrintDevices(Data);
 
 }
 

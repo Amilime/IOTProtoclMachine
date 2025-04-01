@@ -26,23 +26,23 @@ class ProtocolSave {
 public:
     ProtocolSave();
 
-    void SaveData(const vector<Device> &devices, const string &filename);
+    static void SaveData(const vector<Device> &devices, const string &filename);
 
-    string JoinVector(const std::vector<int> &vec, const std::string &delimiter);
+    static string JoinVector(const std::vector<int> &vec, const std::string &delimiter);
 
-    void AddDevice(vector<Device> &devices, const Device &device, const string &filename);
+    static void AddDevice(vector<Device> &devices, const Device &device, const string &filename);
 
-    vector<Device> LoadData(const string &filename);
+    static vector<Device> LoadData(const string &filename);
 
-    vector<int> SplitStringToVector(const std::string &str, const std::string &delimiter);
+    static vector<int> SplitStringToVector(const std::string &str, const std::string &delimiter);
 
-    bool CheckAndCreateFile(const string &filename);
+    static bool CheckAndCreateFile(const string &filename);
 
-    Device *FindDevice(vector<Device> &devices, int id);
+    static Device *FindDevice(vector<Device> &devices, int id);
 
-    void PrintDevices(const vector<Device> &devices);
+    static void PrintDevices(const vector<Device> &devices);
 
-    void RemoveDevice(vector<Device> &devices, int id, const string &filename);
+    static void RemoveDevice(vector<Device> &devices, int id, const string &filename);
 };
 
 

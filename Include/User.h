@@ -26,26 +26,28 @@ class User {
 public:
     User();
 
-    SerialPort Open(const char *portname,
+    static SerialPort Open(const char *portname,
                     int baudrate,
                     char parity,
                     char databit,
                     char stopbit,
                     char synchronizeflag);
 
-    void SendDemo(SerialPort &S,const std::string &database,int id); // 基础发数据
+    static void SendDemo(SerialPort &S,const std::string &database,int id); // 基础发数据
 
-    void SendDemo2(SerialPort &S, const std::string &database, int id);
+    static void SendDemo2(SerialPort &S, const std::string &database, int id);
 
-    void ReceiveDemo(SerialPort &s); // 基础收数据
+    void StartReceiving(SerialPort &S);
 
-    SerialPort CreateSP();  // 创建并打开通道
+    static void ReceiveDemo(SerialPort &s); // 基础收数据
 
-    void SaveData(std::string &filename);
+    static SerialPort CreateSP();  // 创建并打开通道
 
-    void ReadVec(const std::string &input, std::vector<int> &data);
+    static void SaveData(std::string &filename);
 
-    void FileDirectory();
+    static void ReadVec(const std::string &input, std::vector<int> &data);
+
+    static void FileDirectory();
 
 };
 

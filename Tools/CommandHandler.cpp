@@ -8,8 +8,9 @@
 #include "../Include/ProtocolSave.h"
 
 #include <iostream>
-#include <sstream>
 #include <algorithm>
+#include <chrono>
+#include <thread>
 
 using namespace std;
 
@@ -155,15 +156,15 @@ int CommandHandler::extractID(const string &command) {
 // 具体命令的实现
 void CommandHandler::queryAll() {   // 查询所有的数据库
     User user;
-    user.FileDirectory();
+    User::FileDirectory();
 }
 
 void CommandHandler::queryDb(const std::string &dbName) {  //查询某个数据库里的所有信息
     ProtocolSave ps;
     const string locate = "../SaveFile/";
     string filename = locate + dbName + ".amdb";
-    vector<Device> Data = ps.LoadData(filename);
-    ps.PrintDevices(Data);
+    vector<Device> Data = ProtocolSave::LoadData(filename);
+    ProtocolSave::PrintDevices(Data);
 }
 
 void CommandHandler::queryId(const std::string &dbName, int id) {  //查询某个数据库里某个ID的所有信息
@@ -174,54 +175,53 @@ void CommandHandler::saveData(const std::string &dbName) { //存储数据
     User user;
     const string locate = "../SaveFile/";
     string filename = locate + dbName + ".amdb";
-    user.SaveData(filename);
+    User::SaveData(filename);
 }
 
 void CommandHandler::deleteData(const std::string &dbName, int id) {
     ProtocolSave ps;
     const string locate = "../SaveFile/";
     string filename = locate + dbName + ".amdb";
-    vector<Device> devices_table = ps.LoadData(filename);
-    ps.RemoveDevice(devices_table,id,filename);
+    vector<Device> devices_table = ProtocolSave::LoadData(filename);
+    ProtocolSave::RemoveDevice(devices_table, id, filename);
     cout << "---删除完成---" << endl;
-    ps.PrintDevices(devices_table);
+    ProtocolSave::PrintDevices(devices_table);
 }
 
 void CommandHandler::openSP() {
     cout << "开启串口通信\n";
-    User user;
-    currentPort = user.CreateSP(); // 其实这里预设参数也应该存入数据库的，但是懒了暂时没做（
+    currentPort = User::CreateSP(); // 其实这里预设参数也应该存入数据库的，但是懒了暂时没做（
     isSPOpened = true;
 }
 
 void CommandHandler::openRC() {
-    if(isSPOpened){
+    if (isSPOpened) {
         cout << "开启接收通道\n";
-        User user;
-        user.ReceiveDemo(currentPort);
-    } else{
-        cout <<"串口未开启，无法接受数据\n";
+        user.StartReceiving(currentPort);
+        // User::ReceiveDemo(currentPort);
+    } else {
+        cout << "串口未开启，无法接受数据\n";
     }
 }
 
 void CommandHandler::sendReq(const std::string &dbName, int id) {
-    if(isSPOpened){
+    if (isSPOpened) {
         const string locate = "../SaveFile/";
         string filename = locate + dbName + ".amdb";
         User user;
-        user.SendDemo(currentPort,filename,id);
-    } else{
-        cout <<"串口未开启，无法接受数据\n";
+        User::SendDemo(currentPort, filename, id);
+    } else {
+        cout << "串口未开启，无法接受数据\n";
     }
 }
 
 void CommandHandler::sendReqRes(const std::string &dbName, int id) {
-    if(isSPOpened){
+    if (isSPOpened) {
         const string locate = "../SaveFile/";
         string filename = locate + dbName + ".amdb";
         User user;
-        user.SendDemo2(currentPort,filename,id);
-    } else{
-        cout <<"串口未开启，无法接受数据\n";
+        User::SendDemo2(currentPort, filename, id);
+    } else {
+        cout << "串口未开启，无法接受数据\n";
     }
 }
