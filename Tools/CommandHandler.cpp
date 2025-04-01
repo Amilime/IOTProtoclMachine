@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 using namespace std;
 
@@ -89,24 +90,37 @@ void CommandHandler::executeCommand(const CommandType& commandType, const std::s
 }
 
 // 辅助函数：提取 DBNAME
-std::string CommandHandler::extractDBName(const std::string& command) {
+string CommandHandler::extractDBName(const std::string& command) {
     size_t start = command.find("{");
     size_t end = command.find("}");
-    if (start != string::npos && end != string::npos && start < end) {
+    if (start != std::string::npos && end != std::string::npos && start < end) {
         return command.substr(start + 1, end - start - 1); // 提取并返回 DBNAME
     }
-    return " ";
+    return "";
 }
 
-// 辅助函数：提取 ID
+// 提取 ID，处理为空格和大括号情况
 int CommandHandler::extractID(const std::string& command) {
     size_t pos = command.find("ID=");
     if (pos != std::string::npos) {
         size_t id_start = pos + 3; // 跳过 "ID="
-        // 继续查找接下来的空格或字符串结尾
-        size_t id_end = command.find_first_of(" }", id_start); // 查找最近的空格或 '}'
-        if (id_end != std::string::npos) {
-            std::string id_str = command.substr(id_start, id_end - id_start); // 提取 ID 部分
+
+        // 跳过空格
+        while (id_start < command.length() && command[id_start] == ' ') {
+            id_start++;
+        }
+
+        // 查找 ID 的结束位置，跳过 `{` 和空格
+        size_t id_end = command.find_first_of(" }", id_start);
+
+        if (id_end != string::npos) {
+            std::string id_str = command.substr(id_start, id_end - id_start);
+
+            // 处理大括号，去除所有多余的字符
+            id_str.erase(std::remove(id_str.begin(), id_str.end(), '{'), id_str.end());
+            id_str.erase(std::remove(id_str.begin(), id_str.end(), '}'), id_str.end());
+
+            // 尝试转换为整型
             try {
                 return std::stoi(id_str); // 转换为整型
             } catch (std::invalid_argument&) {
@@ -123,7 +137,8 @@ int CommandHandler::extractID(const std::string& command) {
 
 // 具体命令的实现
 void CommandHandler::queryAll() {
-    std::cout << "查询所有数据库的功能.\n";
+    User user;
+    user.FileDirectory();
 }
 
 void CommandHandler::queryDb(const std::string& dbName) {
@@ -131,7 +146,7 @@ void CommandHandler::queryDb(const std::string& dbName) {
 }
 
 void CommandHandler::queryId(const std::string& dbName, int id) {
-    std::cout << "查询数据库: " << dbName << " 中的 ID: " << id << "\n";
+    std::cout << "查询数据库的行: " << dbName << " 中的 ID: " << id << "\n";
 }
 
 void CommandHandler::saveData(const std::string& dbName) {
