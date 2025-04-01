@@ -183,8 +183,8 @@ unsigned long SerialPort::receiveData(void *buf, int len) {
         return 0;
     }; //如果输入缓冲区字节数为0，则返回false
 
- //   cout << "Input Buffer Count: " << comstat.cbInQue << endl;
-  //  cout << " bytesRead: " << bytesRead << endl;
+    //   cout << "Input Buffer Count: " << comstat.cbInQue << endl;
+    //  cout << " bytesRead: " << bytesRead << endl;
     //同步
 
     if (this->synchronizeflag == 1) {
@@ -201,57 +201,57 @@ unsigned long SerialPort::receiveData(void *buf, int len) {
 
             return 0;
         }
-            //同步输出模式
-            //调试用 if (bytesRead > 0) {
-            //   cout << "Buffer Content (Hex): ";
-            //  unsigned char *p = static_cast<unsigned char*>(buf);
-            //  for (DWORD i = 0; i < bytesRead; ++i) {
-            //      cout << hex << setw(2) << setfill('0') << (int)p[i] << " ";
-            //  }
-            //   cout << dec << endl;
-            //}
+        //同步输出模式
+        //调试用 if (bytesRead > 0) {
+        //   cout << "Buffer Content (Hex): ";
+        //  unsigned char *p = static_cast<unsigned char*>(buf);
+        //  for (DWORD i = 0; i < bytesRead; ++i) {
+        //      cout << hex << setw(2) << setfill('0') << (int)p[i] << " ";
+        //  }
+        //   cout << dec << endl;
+        //}
 
-            // cout << "Received: " << (char*)buf << " (Bytes read: " << bytesRead << ")" << endl;
-            // }
+        // cout << "Received: " << (char*)buf << " (Bytes read: " << bytesRead << ")" << endl;
+        // }
     }
-            //异步
-        else {
-            BOOL ReadStat = ReadFile(hSerial,
-                                     buf,
-                                     bytesRead,
-                                     &bytesRead,
-                                     &m_osRead);
+        //异步
+    else {
+        BOOL ReadStat = ReadFile(hSerial,
+                                 buf,
+                                 bytesRead,
+                                 &bytesRead,
+                                 &m_osRead);
 
-            if (!ReadStat) {
+        if (!ReadStat) {
 
-                DWORD error = GetLastError();
-                //调试用    cerr << "ReadFile failed with error: " << error << endl;
-                if (GetLastError() == ERROR_IO_PENDING) { //如果串口正在读取
-                    DWORD waitResult = WaitForSingleObject(m_osRead.hEvent, 1000);
-                    if (waitResult == WAIT_OBJECT_0) {
-                        GetOverlappedResult(hSerial, &m_osRead, &bytesRead, TRUE);
-                        //函数一直等待，直到操作完成或由于错误返回
-                        //调试用    cerr << "GetOverlappedResult success, bytesRead: " << bytesRead << endl;
-                    }
-                    //调试用     cerr<<"GetOverlappedResult后:"<<GetLastError()<<endl;
-                } else {
-                    ClearCommError(hSerial, &ErrorFlags, &comstat);
-                    CloseHandle(m_osRead.hEvent);
-                    cerr << "读取错误:" << GetLastError() << endl;
-                    return 0;
+            DWORD error = GetLastError();
+            //调试用    cerr << "ReadFile failed with error: " << error << endl;
+            if (GetLastError() == ERROR_IO_PENDING) { //如果串口正在读取
+                DWORD waitResult = WaitForSingleObject(m_osRead.hEvent, 1000);
+                if (waitResult == WAIT_OBJECT_0) {
+                    GetOverlappedResult(hSerial, &m_osRead, &bytesRead, TRUE);
+                    //函数一直等待，直到操作完成或由于错误返回
+                    //调试用    cerr << "GetOverlappedResult success, bytesRead: " << bytesRead << endl;
                 }
-               //  cerr << "ReadFile failed with error: " << error << endl;
+                //调试用     cerr<<"GetOverlappedResult后:"<<GetLastError()<<endl;
+            } else {
+                ClearCommError(hSerial, &ErrorFlags, &comstat);
+                CloseHandle(m_osRead.hEvent);
+                cerr << "读取错误:" << GetLastError() << endl;
+                return 0;
             }
-
-            //调试用
-            //     if (bytesRead > 0) {
-            //        cout << "Buffer Content (Hex): ";
-            //        unsigned char *p = static_cast<unsigned char*>(buf);
-            //        for (DWORD i = 0; i < bytesRead; ++i) {
-            //            cout << hex << setw(2) << setfill('0') << (int)p[i] << " ";
-            //       }
-            //         cout << dec << endl;
+            //  cerr << "ReadFile failed with error: " << error << endl;
         }
+
+        //调试用
+        //     if (bytesRead > 0) {
+        //        cout << "Buffer Content (Hex): ";
+        //        unsigned char *p = static_cast<unsigned char*>(buf);
+        //        for (DWORD i = 0; i < bytesRead; ++i) {
+        //            cout << hex << setw(2) << setfill('0') << (int)p[i] << " ";
+        //       }
+        //         cout << dec << endl;
+    }
 
     CloseHandle(m_osRead.hEvent);
     return bytesRead;

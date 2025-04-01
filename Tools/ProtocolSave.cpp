@@ -69,7 +69,7 @@ vector<Device> ProtocolSave::LoadData(const string &filename) {
         device.response = SplitStringToVector(token, ";");
 
         devices.push_back(device);
-        if(device.id > currentMaxId) {
+        if (device.id > currentMaxId) {
             currentMaxId = device.id;
         }
 
@@ -122,28 +122,28 @@ Device *ProtocolSave::FindDevice(vector<Device> &devices, int id) {
 
 void ProtocolSave::PrintDevices(const vector<Device> &devices) {
     for (const auto &device: devices) {
-        cout <<  " 序号:" << device.id
+        cout << " 序号:" << device.id
              << ", 名字: " << device.name
              << ", 参数: " << device.params
              << ", 功能: " << device.function
              << ", 功能码: ";
-        for (const int& code : device.func_code) {
-            cout<<code<<" ";
+        for (const int &code: device.func_code) {
+            cout << code << " ";
         }
-        cout<<", 响应: ";
-        for (const int& resp : device.response) {
-            cout<<resp << " ";
+        cout << ", 响应: ";
+        for (const int &resp: device.response) {
+            cout << resp << " ";
         }
-        cout<<endl;
+        cout << endl;
     }
 }
 
 void ProtocolSave::RemoveDevice(vector<Device> &devices, int id, const string &filename) {
-    auto it = remove_if(devices.begin(),devices.end(),[id](const Device& d){
+    auto it = remove_if(devices.begin(), devices.end(), [id](const Device &d) {
         return d.id == id;
     });
-    devices.erase(it,devices.end());
-    SaveData(devices,filename); //更新文件
+    devices.erase(it, devices.end());
+    SaveData(devices, filename); //更新文件
 
 }
 

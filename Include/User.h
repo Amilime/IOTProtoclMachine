@@ -41,7 +41,7 @@ public:
 
     void SaveData();
 
-    void ReadVec(const std::string& input,std::vector<int> &data);
+    void ReadVec(const std::string &input, std::vector<int> &data);
 
     void FileDirectory();
 };

@@ -1,7 +1,20 @@
 # ninja log v5
-4	1213	7652147080080965	CMakeFiles/C_Serial.dir/main.cpp.obj	bb191a17bab8ee8
-2	1369	7651118356571838	CMakeFiles/C_Serial.dir/Tools/SerialPort.cpp.obj	77e7af71da430520
-508	693	7652218213336978	C_Serial.exe	64c0abe1c40e66b6
+5	1915	7652269411265670	CMakeFiles/C_Serial.dir/main.cpp.obj	bb191a17bab8ee8
 32	149	7650846667767347	CMakeFiles/C_Serial.dir/Tools/ProtocolLoad.cpp.obj	e08148166b00ca65
-3	508	7652218211512007	CMakeFiles/C_Serial.dir/Tools/ProtocolSave.cpp.obj	9a23013ad8b28ef0
-4	2482	7652215195538866	CMakeFiles/C_Serial.dir/Tools/User.cpp.obj	7e04f735a47d5473
+508	693	7652218213336978	C_Serial.exe	64c0abe1c40e66b6
+11	1205	7652268240448629	CMakeFiles/C_Serial.dir/Tools/SerialPort.cpp.obj	77e7af71da430520
+18	735	7652268235750386	CMakeFiles/C_Serial.dir/Tools/ProtocolSave.cpp.obj	9a23013ad8b28ef0
+26	1365	7652268242040526	CMakeFiles/C_Serial.dir/Tools/User.cpp.obj	7e04f735a47d5473
+35	202	7652268230423655	CMakeFiles/C_Serial.dir/Test/test1.cpp.obj	19bb2e386ca5d958
+1	574	7652274372740932	build.ninja	41ce5ad63b270545
+4	1356	7652274441524856	CMakeFiles/C_Serial.dir/Tools/CommandHandler.cpp.obj	3f1c6e73c66f2358
+1357	1820	7652274446116329	C_Serial.exe	7012a6a22eee71e9
+4	1235	7652275313905404	CMakeFiles/C_Serial.dir/Tools/User.cpp.obj	7e04f735a47d5473
+1235	1394	7652275315466284	C_Serial.exe	7012a6a22eee71e9
+4	2498	7652294815567637	CMakeFiles/C_Serial.dir/main.cpp.obj	bb191a17bab8ee8
+13	2548	7652294816038149	CMakeFiles/C_Serial.dir/Tools/User.cpp.obj	7e04f735a47d5473
+21	2549	7652294816038149	CMakeFiles/C_Serial.dir/Tools/CommandHandler.cpp.obj	3f1c6e73c66f2358
+2549	3863	7652294829177176	C_Serial.exe	7012a6a22eee71e9
+13	1090	7652297259042462	CMakeFiles/C_Serial.dir/Tools/CommandHandler.cpp.obj	3f1c6e73c66f2358
+4	1108	7652297259234747	CMakeFiles/C_Serial.dir/main.cpp.obj	bb191a17bab8ee8
+1109	1280	7652297260894754	C_Serial.exe	7012a6a22eee71e9

@@ -6,6 +6,7 @@
  */
 
 #include <windows.h>
+
 #ifndef C_SERIAL_SERIALPORT_H
 #define C_SERIAL_SERIALPORT_H
 
@@ -13,6 +14,7 @@
 class SerialPort {
 public:
     SerialPort();
+
     ~SerialPort(); //折构函数
     /**
      * 参数设置
@@ -23,21 +25,21 @@ public:
      * stopbit：停止位（一般为1位）
      * synchronizeflag（同步1、异步0，目前仅使用异步通讯0）
      */
-    bool openSerial(const char* portname,
+    bool openSerial(const char *portname,
                     int baudrate,
                     char parity,
                     char databit,
                     char stopbit,
-                    char synchronizeflag=0);
+                    char synchronizeflag = 0);
 
     void closeSerial();
 
-    unsigned long sendData(const void *buf,int len);
+    unsigned long sendData(const void *buf, int len);
 
-    unsigned long receiveData(void *buf,int len);
+    unsigned long receiveData(void *buf, int len);
 
 private:
-     HANDLE hSerial;
+    HANDLE hSerial;
     char synchronizeflag;
 };
 
