@@ -3,6 +3,7 @@
 //
 
 #include "../Include/User.h"
+#include "../Include/ProtocolSave.h"
 #include <iostream>
 #include <vector>
 #include <iomanip>
@@ -14,6 +15,8 @@ using namespace std;
 User::User() {
 
 }
+
+
 
 SerialPort User::Open(const char *portname,
                       int baudrate,
@@ -76,7 +79,8 @@ void User::ReceiveDemo(SerialPort &S) {
         Sleep(1000);
     }
 }
-
+// 第二层封装
+//串口开启
 SerialPort User::CreateSP() {
     string portname;
     int baudrate;
@@ -154,4 +158,21 @@ SerialPort User::CreateSP() {
     }
 }
 
+// 数据存储
+void User::SaveData() {
+    const string locate = "../SaveFile";
+    string filename;
+    cout<<"输入你要存储/创建的库:"<<endl;
+    cin>> filename;
+    string FinalName = locate+filename+".amdb";
+    ProtocolSave ps;
+    ps.CheckAndCreateFile(FinalName);
+    cout<<"已打开/创建库:"<<FinalName<<endl;
 
+    cout<<"---加载内容中---"<<endl;
+    vector<Device> Data = ps.LoadData(FinalName);
+    cout<<"---加载成功---"<<endl;
+
+
+
+}

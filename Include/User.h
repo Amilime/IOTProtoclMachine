@@ -37,6 +37,7 @@ public:
 
     SerialPort CreateSP();  // 创建并打开通道
 
+    void SaveData();
 };
 
 
